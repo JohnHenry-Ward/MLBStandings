@@ -1,0 +1,73 @@
+*{
+    font-family: 'Roboto';
+    box-sizing: border-box;
+}
+
+body, html{
+    height: 100%;
+}
+
+.bgImg{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: url(/images/background.jpg) no-repeat center center fixed;
+    background-size: cover;
+    z-index: -1;
+    filter: blur(3px);
+    transform: scale(1.1);
+    position: fixed;
+}
+
+header{
+    text-align: center;
+    font-size: 25px;
+    color: white;
+    letter-spacing: 2px;
+}
+
+.ALWest{
+    width: 650px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.DivisionHeader{
+    background-color: #CD0001;
+    text-align: center;
+    color: white;
+    height: 40px;
+    font-size: 20px;
+    line-height: 38px;
+    margin-bottom: 0;
+    letter-spacing: 3px;
+}
+
+.Division{
+    width: 100%;
+    margin-top: 0;
+    background-color: #C4C4C4;
+    border-collapse: collapse;
+}
+
+.Division td{
+    text-align: center;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.Division th{
+    background-color: #D6D6D6;
+    font-weight: normal;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.team{
+    text-align: left !important;
+    padding-left: 10px;
+}
