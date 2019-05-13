@@ -37,7 +37,7 @@ header{
     padding-bottom: 20px;
 }
 
-.ALHeader{
+.alwest, .alcentral, .aleast{
     background-color: #CD0001;
     text-align: center;
     color: white;
@@ -48,7 +48,7 @@ header{
     letter-spacing: 3px;
 }
 
-.NLHeader{
+.nlwest, .nlcentral, .nleast{
     background-color: #000089;
     text-align: center;
     color: white;
@@ -82,6 +82,11 @@ header{
 .team{
     text-align: left !important;
     padding-left: 10px;
+}
+
+.link{
+    text-decoration: none;
+    color: black;
 }
 
 .editPopup{
