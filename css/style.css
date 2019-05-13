@@ -14,11 +14,10 @@ body, html{
     left: 0;
     right: 0;
     height: 100%;
-    background: url(/images/background.jpg) no-repeat center center fixed;
+    background: url(../images/background.jpg) no-repeat center center fixed;
     background-size: cover;
     z-index: -1;
-    filter: blur(3px);
-    filter: brightness(70%);
+    filter: blur(3px) brightness(70%);
     transform: scale(1.1);
     position: fixed;
 }
@@ -30,15 +29,26 @@ header{
     letter-spacing: 2px;
 }
 
-.ALWest{
+.ALNL{
     width: 650px;
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
 
-.DivisionHeader{
+.ALHeader{
     background-color: #CD0001;
+    text-align: center;
+    color: white;
+    height: 40px;
+    font-size: 20px;
+    line-height: 38px;
+    margin-bottom: 0;
+    letter-spacing: 3px;
+}
+
+.NLHeader{
+    background-color: #000089;
     text-align: center;
     color: white;
     height: 40px;
