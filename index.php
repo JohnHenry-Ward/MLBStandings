@@ -25,42 +25,61 @@
             if(!empty($_GET['updateTeam'])){
                 $updateTeam = $_GET['updateTeam'];
 
-                $sql = 'SELECT teamName, wins, losses, winPerc, gamesBack, lastTen, streak FROM alwest WHERE teamName = "$updateTeam"';
+                $sql = "SELECT teamName, wins, losses, winPerc, gamesBack, lastTen, streak, division FROM mlbstandings WHERE teamName = '$updateTeam'";
 
+                $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
+
+                $row = mysqli_fetch_array($result);
+
+                $wins = $row['wins'];
+                $losses = $row['losses'];
+                $winPerc = $row['winPerc'];
+                $gamesBack = $row['gamesBack'];
+                $lastTen = $row['lastTen'];
+                $streak = $row['streak'];
+                
                 ?>
                 <div class = 'editPopup'>
                         <h2>Updating team: <?php echo $updateTeam ?></h2>
                         <form>
                             <label>Wins:</label>
-                            <input name = 'wins' type = 'text' value = <?php $wins ?>autofocus> <br>
+                            <input name = 'wins' type = 'text' value = <?php echo $wins ?>> <br>
                             <label>Losses:</label>
-                            <input name = 'losses' type = 'text'> <br>
+                            <input name = 'losses' type = 'text' value = <?php echo $losses ?>> <br>
                             <label>Win%:</label>
-                            <input name = 'winPerc' type = 'text'> <br>
+                            <input name = 'winPerc' type = 'text' value = <?php echo $winPerc ?>> <br>
                             <label>GB:</label>
-                            <input name = 'gamesBack' type = 'text'> <br>
+                            <input name = 'gamesBack' type = 'text' value = <?php echo $gamesBack ?>> <br>
                             <label>L10:</label>
-                            <input name = 'lastTen' type = 'text'> <br>
+                            <input name = 'lastTen' type = 'text' value = <?php echo $lastTen ?>> <br>
                             <label>Streak:</label>
-                            <input name = 'streak' type = 'text'> <br>
-                            <input type="submit" value="sendUpdate">
+                            <input name = 'streak' type = 'text' value = <?php echo $streak ?>> <br>
+                            <input name = 'sendUpdate' type = 'hidden' value = "<?php echo $updateTeam ?>">
+                            <input type="submit" value = "Update">
                         </form>
                 </div>
                 <?php
             }
 
-            
-
             if(!empty($_GET['sendUpdate'])){
                 //get all update fields
+                $updateTeam = $_GET['sendUpdate'];
                 $wins = $_GET['wins'];
                 $losses = $_GET['losses'];
                 $winPerc = $_GET['winPerc'];
                 $gamesBack = $_GET['gamesBack'];
                 $lastTen = $_GET['lastTen'];
                 $streak = $_GET['streak'];
-                //$sql = "UPDATE tblName
-                        //SET wins = $wins, losses = $losse"
+                $sql = "UPDATE mlbstandings
+                        SET wins = '$wins',
+                            losses = '$losses',
+                            winPerc = '$winPerc',
+                            gamesBack = '$gamesBack',
+                            lastTen = '$lastTen',
+                            streak = '$streak'
+                        WHERE teamName = '$updateTeam'";
+                mysqli_query($link, $sql) or die('Update error: ' . mysqli_error($link));
+                header('location:index.php');
             }
         ?>
         <div class="ALNL">
@@ -145,7 +164,6 @@
                     //select the data from the table ALEast
                     $sql = "SELECT * FROM mlbstandings WHERE division = 'aleast' ORDER BY winPerc DESC";
 
-
                     //results gives an array of containing query results
                     $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
 
@@ -178,7 +196,6 @@
                 <?php
                     //select the data from the table ALWest
                     $sql = "SELECT * FROM mlbstandings WHERE division = 'nlwest' ORDER BY winPerc DESC";
-
 
                     //results gives an array of containing query results
                     $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
@@ -213,7 +230,6 @@
                     //select the data from the table ALWest
                     $sql = "SELECT * FROM mlbstandings WHERE division = 'nlcentral' ORDER BY winPerc DESC";
 
-
                     //results gives an array of containing query results
                     $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
 
@@ -246,7 +262,6 @@
                 <?php
                     //select the data from the table ALWest
                     $sql = "SELECT * FROM mlbstandings WHERE division = 'nleast' ORDER BY winPerc DESC";
-
 
                     //results gives an array of containing query results
                     $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
