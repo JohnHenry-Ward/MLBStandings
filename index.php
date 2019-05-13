@@ -9,7 +9,7 @@
     <title>MLB Standings</title>
 </head>
 <body>
-    <!-- <div class="bgImg"></div> -->
+    <div class="bgImg"></div>
     <header>
         <h1>MLB Standings</h1>
     </header>
@@ -21,11 +21,14 @@
             //connect to database
             $link = connectToDatabase();
 
-            //update
+            //array containing division names
+            $divisionName = ['alwest', 'alcentral', 'aleast', 'nlwest', 'nlcentral', 'nleast'];
+
+            //update step 1: fill textbox
             if(!empty($_GET['updateTeam'])){
                 $updateTeam = $_GET['updateTeam'];
 
-                $sql = "SELECT teamName, wins, losses, winPerc, gamesBack, lastTen, streak, division FROM mlbstandings WHERE teamName = '$updateTeam'";
+                $sql = "SELECT teamName, wins, losses, winPerc, gamesBack, lastTen, streak FROM mlbstandings WHERE teamName = '$updateTeam'";
 
                 $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
 
@@ -38,7 +41,7 @@
                 $lastTen = $row['lastTen'];
                 $streak = $row['streak'];
                 
-                ?>
+        ?>
                 <div class = 'editPopup'>
                         <h2>Updating team: <?php echo $updateTeam ?></h2>
                         <form>
@@ -58,9 +61,10 @@
                             <input type="submit" value = "Update">
                         </form>
                 </div>
-                <?php
+        <?php
             }
 
+            //update step 2: send SQL update
             if(!empty($_GET['sendUpdate'])){
                 //get all update fields
                 $updateTeam = $_GET['sendUpdate'];
@@ -81,205 +85,51 @@
                 mysqli_query($link, $sql) or die('Update error: ' . mysqli_error($link));
                 header('location:index.php');
             }
+        
+            //for each division, print out the standings
+            for($i = 0; $i < count($divisionName); $i++){
+                $sql = "SELECT divisionName FROM mlbstandings WHERE divisionID = '$divisionName[$i]'";
+
+                $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
+
+                $row = mysqli_fetch_array($result);
+    
+                $divName = $row['divisionName'];
         ?>
-        <div class="ALNL">
-            <h4 class = "ALHeader">American League West</h4>
-            <table class="Division">
-                <tr>
-                    <th></th> <!--Blank header-->
-                    <th>Wins</th>
-                    <th>Losses</th>
-                    <th>Win%</th>
-                    <th>GB</th>
-                    <th>L10</th>
-                    <th>Streak</th>
-                </tr>
-                <?php
-                    //select the data from the table ALWest
-                    $sql = "SELECT * FROM mlbstandings WHERE division = 'alwest' ORDER BY winPerc DESC";
+                <div class="ALNL">
+                    <?php echo "<h4 class = $divisionName[$i]>$divName</h4>" ?>
+                    <table class="Division">
+                        <tr>
+                            <th></th> <!--Blank header-->
+                            <th>Wins</th>
+                            <th>Losses</th>
+                            <th>Win%</th>
+                            <th>GB</th>
+                            <th>L10</th>
+                            <th>Streak</th>
+                        </tr>
+                        <?php
+                            //select the data
+                            $sql = "SELECT * FROM mlbstandings WHERE divisionID = '$divisionName[$i]' ORDER BY winPerc DESC";
 
-                    //results gives an array of containing query results
-                    $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
+                            //results gives an array of containing query results
+                            $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
 
-                    while($row = mysqli_fetch_array($result)){
-                        echo "<tr>
-                                <td class = 'team'><a href='?updateTeam=$row[teamName]'>$row[teamName]</a></td>
-                                <td>$row[wins]</td>
-                                <td>$row[losses]</td>
-                                <td>$row[winPerc]</td>
-                                <td>$row[gamesBack]</td>
-                                <td>$row[lastTen]</td>
-                                <td>$row[streak]</td>
-                             </tr>";
-                    }
-                ?>
-            </table>
-        </div>
-        <div class="ALNL">
-            <h4 class = "ALHeader">American League Central</h4>
-            <table class="Division">
-                <tr>
-                    <th></th> <!--Blank header-->
-                    <th>Wins</th>
-                    <th>Losses</th>
-                    <th>Win%</th>
-                    <th>GB</th>
-                    <th>L10</th>
-                    <th>Streak</th>
-                </tr>
-                <?php
-                    //select the data from the table ALWest
-                    $sql = "SELECT * FROM mlbstandings WHERE division = 'alcentral' ORDER BY winPerc DESC";
-
-                    //results gives an array of containing query results
-                    $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
-
-                    while($row = mysqli_fetch_array($result)){
-                        echo "<tr>
-                                <td class = 'team'>$row[teamName]</td>
-                                <td>$row[wins]</td>
-                                <td>$row[losses]</td>
-                                <td>$row[winPerc]</td>
-                                <td>$row[gamesBack]</td>
-                                <td>$row[lastTen]</td>
-                                <td>$row[streak]</td>
-                             </tr>";
-                    }
-                ?>
-            </table>
-        </div>
-        <div class="ALNL">
-            <h4 class = "ALHeader">American League East</h4>
-            <table class="Division">
-                <tr>
-                    <th></th> <!--Blank header-->
-                    <th>Wins</th>
-                    <th>Losses</th>
-                    <th>Win%</th>
-                    <th>GB</th>
-                    <th>L10</th>
-                    <th>Streak</th>
-                </tr>
-                <?php
-                    //select the data from the table ALEast
-                    $sql = "SELECT * FROM mlbstandings WHERE division = 'aleast' ORDER BY winPerc DESC";
-
-                    //results gives an array of containing query results
-                    $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
-
-                    while($row = mysqli_fetch_array($result)){
-                        echo "<tr>
-                                <td class = 'team'>$row[teamName]</td>
-                                <td>$row[wins]</td>
-                                <td>$row[losses]</td>
-                                <td>$row[winPerc]</td>
-                                <td>$row[gamesBack]</td>
-                                <td>$row[lastTen]</td>
-                                <td>$row[streak]</td>
-                             </tr>";
-                    }
-                ?>
-            </table>
-        </div>
-        <div class="ALNL">
-            <h4 class = "NLHeader">National League West</h4>
-            <table class="Division">
-                <tr>
-                    <th></th> <!--Blank header-->
-                    <th>Wins</th>
-                    <th>Losses</th>
-                    <th>Win%</th>
-                    <th>GB</th>
-                    <th>L10</th>
-                    <th>Streak</th>
-                </tr>
-                <?php
-                    //select the data from the table ALWest
-                    $sql = "SELECT * FROM mlbstandings WHERE division = 'nlwest' ORDER BY winPerc DESC";
-
-                    //results gives an array of containing query results
-                    $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
-
-                    while($row = mysqli_fetch_array($result)){
-                        echo "<tr>
-                                <td class = 'team'>$row[teamName]</td>
-                                <td>$row[wins]</td>
-                                <td>$row[losses]</td>
-                                <td>$row[winPerc]</td>
-                                <td>$row[gamesBack]</td>
-                                <td>$row[lastTen]</td>
-                                <td>$row[streak]</td>
-                             </tr>";
-                    }
-                ?>
-            </table>
-        </div>
-        <div class="ALNL">
-            <h4 class = "NLHeader">National League Central</h4>
-            <table class="Division">
-                <tr>
-                    <th></th> <!--Blank header-->
-                    <th>Wins</th>
-                    <th>Losses</th>
-                    <th>Win%</th>
-                    <th>GB</th>
-                    <th>L10</th>
-                    <th>Streak</th>
-                </tr>
-                <?php
-                    //select the data from the table ALWest
-                    $sql = "SELECT * FROM mlbstandings WHERE division = 'nlcentral' ORDER BY winPerc DESC";
-
-                    //results gives an array of containing query results
-                    $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
-
-                    while($row = mysqli_fetch_array($result)){
-                        echo "<tr>
-                                <td class = 'team'>$row[teamName]</td>
-                                <td>$row[wins]</td>
-                                <td>$row[losses]</td>
-                                <td>$row[winPerc]</td>
-                                <td>$row[gamesBack]</td>
-                                <td>$row[lastTen]</td>
-                                <td>$row[streak]</td>
-                             </tr>";
-                    }
-                ?>
-            </table>
-        </div>
-        <div class="ALNL">
-            <h4 class = "NLHeader">National League East</h4>
-            <table class="Division">
-                <tr>
-                    <th></th> <!--Blank header-->
-                    <th>Wins</th>
-                    <th>Losses</th>
-                    <th>Win%</th>
-                    <th>GB</th>
-                    <th>L10</th>
-                    <th>Streak</th>
-                </tr>
-                <?php
-                    //select the data from the table ALWest
-                    $sql = "SELECT * FROM mlbstandings WHERE division = 'nleast' ORDER BY winPerc DESC";
-
-                    //results gives an array of containing query results
-                    $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
-
-                    while($row = mysqli_fetch_array($result)){
-                        echo "<tr>
-                                <td class = 'team'>$row[teamName]</td>
-                                <td>$row[wins]</td>
-                                <td>$row[losses]</td>
-                                <td>$row[winPerc]</td>
-                                <td>$row[gamesBack]</td>
-                                <td>$row[lastTen]</td>
-                                <td>$row[streak]</td>
-                             </tr>";
-                    }
-                ?>
-            </table>
-        </div>
+                            while($row = mysqli_fetch_array($result)){
+                                echo "<tr>
+                                        <td class = 'team'><a class = 'link' href='?updateTeam=$row[teamName]'>$row[teamName]</a></td>
+                                        <td>$row[wins]</td>
+                                        <td>$row[losses]</td>
+                                        <td>$row[winPerc]</td>
+                                        <td>$row[gamesBack]</td>
+                                        <td>$row[lastTen]</td>
+                                        <td>$row[streak]</td>
+                                    </tr>";
+                            }
+                        ?>
+                    </table>
+                </div>
+        <?php } ?>
     </main>
 </body>
 </html>
