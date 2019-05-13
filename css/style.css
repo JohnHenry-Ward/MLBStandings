@@ -84,6 +84,37 @@ header{
     padding-left: 10px;
 }
 
+.editPopup{
+    width: 400px;
+    height: 320px;
+    background-color: #C4C4C4;
+    position: fixed;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 50;
+    left: 32.5%;
+    text-align: center;
+}
+
+label{
+    text-align: left;
+    margin-left: 0;
+    display: inline-block;
+    width: 20%;
+    margin-left: 10px;
+}
+
+input[type=text]{
+    width: 50%;
+    background-color: #D6D6D6;
+    margin: 8px 8px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
 /* Scrollbar */
 
 ::-webkit-scrollbar{
