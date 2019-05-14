@@ -9,7 +9,7 @@
     <title>MLB Standings</title>
 </head>
 <body>
-    <!-- <div class="bgImg"></div> -->
+    <div class="bgImg"></div>
     <header>
         <h1>MLB Standings</h1>
     </header>
