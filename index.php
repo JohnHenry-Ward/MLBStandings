@@ -9,7 +9,7 @@
     <title>MLB Standings</title>
 </head>
 <body>
-    <div class="bgImg"></div>
+    <!-- <div class="bgImg"></div> -->
     <header>
         <h1>MLB Standings</h1>
     </header>
@@ -70,14 +70,12 @@
                 $updateTeam = $_GET['sendUpdate'];
                 $wins = $_GET['wins'];
                 $losses = $_GET['losses'];
-                $winPerc = $_GET['winPerc'];
                 $gamesBack = $_GET['gamesBack'];
                 $lastTen = $_GET['lastTen'];
                 $streak = $_GET['streak'];
                 $sql = "UPDATE mlbstandings
                         SET wins = '$wins',
                             losses = '$losses',
-                            winPerc = '$winPerc',
                             gamesBack = '$gamesBack',
                             lastTen = '$lastTen',
                             streak = '$streak'
@@ -116,12 +114,20 @@
                             $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
 
                             while($row = mysqli_fetch_array($result)){
+                                $winPerc = winPercentage($row['wins'], $row['losses']);
+                                $divisionLeader = divisionLeader($row['divisionID']);
+                                if($divisionLeader == $row['winPerc']){
+                                    $gamesBack = '-';
+                                }
+                                else{
+                                    $gamesBack = gamesBack($row['teamName'], $row['divisionID']);
+                                }
                                 echo "<tr>
                                         <td class = 'team'><a class = 'link' href='?updateTeam=$row[teamName]'>$row[teamName]</a></td>
                                         <td>$row[wins]</td>
                                         <td>$row[losses]</td>
-                                        <td>$row[winPerc]</td>
-                                        <td>$row[gamesBack]</td>
+                                        <td>$winPerc</td>
+                                        <td>$gamesBack</td>
                                         <td>$row[lastTen]</td>
                                         <td>$row[streak]</td>
                                     </tr>";
