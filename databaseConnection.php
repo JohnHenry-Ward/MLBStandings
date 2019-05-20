@@ -46,6 +46,8 @@ function gamesBack($teamName, $division){
     $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
 
     $gamesBack = 0;
+    $leaderWins = 0;
+    $leaderLosses = 0;
 
     while($row = mysqli_fetch_array($result)){
         if($row['gamesBack'] == '-'){

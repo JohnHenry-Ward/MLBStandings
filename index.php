@@ -12,6 +12,17 @@
     <div class="bgImg"></div>
     <header>
         <h1>MLB Standings</h1>
+        <nav>
+            <ul>
+                <li class = 'alWest'><a href = '#alwest'>AL West</a></li>
+                <li class = 'alCentral'><a href = '#alcentral'>AL Central</a></li>
+                <li class = 'alEast'><a href = '#aleast'>AL East</a></li>
+                <li class = 'nlWest'><a href = '#nlwest'>NL West</a></li>
+                <li class = 'nlCentral'><a href = '#nlcentral'>NL Central</a></li>
+                <li class = 'nlEast'><a href = '#nleast'>NL East</a></li>
+            </ul>
+            </div>
+        </nav>
     </header>
     <main>
         <?php
@@ -28,7 +39,7 @@
             if(!empty($_GET['updateTeam'])){
                 $updateTeam = $_GET['updateTeam'];
 
-                $sql = "SELECT teamName, wins, losses, winPerc, gamesBack, lastTen, streak FROM mlbstandings WHERE teamName = '$updateTeam'";
+                $sql = "SELECT teamName, wins, losses, winPerc, gamesBack, lastTen, streak, divisionID FROM mlbstandings WHERE teamName = '$updateTeam'";
 
                 $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
 
@@ -40,6 +51,7 @@
                 $gamesBack = $row['gamesBack'];
                 $lastTen = $row['lastTen'];
                 $streak = $row['streak'];
+                $divisionID = $row['divisionID'];
                 
         ?>
                 <div class = 'editPopup'>
@@ -58,6 +70,7 @@
                             <label>Streak:</label>
                             <input name = 'streak' type = 'text' value = <?php echo $streak ?>> <br>
                             <input name = 'sendUpdate' type = 'hidden' value = "<?php echo $updateTeam ?>">
+                            <input name = 'divisionID' type = 'hidden' value = "<?php echo $divisionID ?>">
                             <input type="submit" value = "Update">
                         </form>
                 </div>
@@ -70,18 +83,34 @@
                 $updateTeam = $_GET['sendUpdate'];
                 $wins = $_GET['wins'];
                 $losses = $_GET['losses'];
-                $gamesBack = $_GET['gamesBack'];
+                $winPerc = winPercentage($wins, $losses);
                 $lastTen = $_GET['lastTen'];
                 $streak = $_GET['streak'];
                 $sql = "UPDATE mlbstandings
                         SET wins = '$wins',
                             losses = '$losses',
-                            gamesBack = '$gamesBack',
+                            winPerc = '$winPerc',
                             lastTen = '$lastTen',
                             streak = '$streak'
                         WHERE teamName = '$updateTeam'";
                 mysqli_query($link, $sql) or die('Update error: ' . mysqli_error($link));
-                header('location:index.php');
+
+                //now games back is calculated because the order had to be updated in each division first
+                $divisionID = $_GET['divisionID'];
+                $divisionLeader = divisionLeader($divisionID);
+                if($divisionLeader == $winPerc){
+                    $gamesBack = '-';
+                }
+                else{
+                    $gamesBack = gamesBack($updateTeam, $divisionID);
+                }
+                $sql = "UPDATE mlbstandings
+                        SET gamesBack = '$gamesBack'
+                        WHERE teamName = '$updateTeam'";
+                mysqli_query($link, $sql) or die('Update error: ' . mysqli_error($link));
+
+                header("location: index.php");
+
             }
         
             //for each division, print out the standings
@@ -95,7 +124,7 @@
                 $divName = $row['divisionName'];
         ?>
                 <div class="ALNL">
-                    <?php echo "<h4 class = $divisionName[$i]>$divName</h4>" ?>
+                    <?php echo "<h4 class = $divisionName[$i] id = $divisionName[$i]>$divName</h4>" ?>
                     <table class="Division">
                         <tr>
                             <th></th> <!--Blank header-->

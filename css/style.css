@@ -5,6 +5,7 @@
 
 body, html{
     height: 100%;
+    position: relative;
 }
 
 .bgImg{
@@ -27,6 +28,39 @@ header{
     font-size: 25px;
     color: white;
     letter-spacing: 2px;
+}
+
+header h1{
+    margin-bottom: 0;
+    padding-bottom: 10px;
+}
+
+nav li{
+    list-style-type: none;
+    font-size: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+nav ul{
+    margin: 0 20% 0 20%;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+nav a{
+    text-decoration: none;
+    color: white;
+}
+
+nav .alWest a:hover, nav .alCentral a:hover, nav .alEast a:hover{
+    color: #CD0001;
+}
+
+nav .nlWest a:hover, nav .nlCentral a:hover, nav .nlEast a:hover{
+    color: #000089;
 }
 
 .ALNL{
