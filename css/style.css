@@ -125,33 +125,49 @@ nav .nlWest a:hover, nav .nlCentral a:hover, nav .nlEast a:hover{
 
 .editPopup{
     width: 400px;
-    height: 320px;
-    background-color: #C4C4C4;
+    background-color: #D6D6D6;
     position: fixed;
     display: block;
     margin-left: auto;
     margin-right: auto;
+    padding-bottom: 20px;
     z-index: 50;
     left: 32.5%;
     text-align: center;
 }
 
 label{
-    text-align: left;
+    text-align: center;
     margin-left: 0;
     display: inline-block;
     width: 20%;
-    margin-left: 10px;
+    margin: 0;
 }
 
 input[type=text]{
-    width: 50%;
-    background-color: #D6D6D6;
-    margin: 8px 8px;
+    width: 18px;
+    background-color: #C4C4C4;
     display: inline-block;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+.formGroup{
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#updateField{
+    width: 25px;
+    height: 18px;
+    font-size: 15px;
+    text-align: center;
+    margin: 0;
 }
 
 /* Scrollbar */

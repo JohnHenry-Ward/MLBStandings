@@ -35,11 +35,12 @@
             //array containing division names
             $divisionName = ['alwest', 'alcentral', 'aleast', 'nlwest', 'nlcentral', 'nleast'];
 
+
             //update step 1: fill textbox
             if(!empty($_GET['updateTeam'])){
                 $updateTeam = $_GET['updateTeam'];
 
-                $sql = "SELECT teamName, wins, losses, winPerc, gamesBack, lastTen, streak, divisionID FROM mlbstandings WHERE teamName = '$updateTeam'";
+                $sql = "SELECT teamName, wins, losses, winPerc, gamesBack, divisionID FROM mlbstandings WHERE teamName = '$updateTeam'";
 
                 $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
 
@@ -49,26 +50,21 @@
                 $losses = $row['losses'];
                 $winPerc = $row['winPerc'];
                 $gamesBack = $row['gamesBack'];
-                $lastTen = $row['lastTen'];
-                $streak = $row['streak'];
                 $divisionID = $row['divisionID'];
                 
         ?>
+                <!-- Popup GUI for editing wins and losses -->
                 <div class = 'editPopup'>
                         <h2>Updating team: <?php echo $updateTeam ?></h2>
                         <form>
-                            <label>Wins:</label>
-                            <input name = 'wins' type = 'text' value = <?php echo $wins ?>> <br>
-                            <label>Losses:</label>
-                            <input name = 'losses' type = 'text' value = <?php echo $losses ?>> <br>
-                            <label>Win%:</label>
-                            <input name = 'winPerc' type = 'text' value = <?php echo $winPerc ?>> <br>
-                            <label>GB:</label>
-                            <input name = 'gamesBack' type = 'text' value = <?php echo $gamesBack ?>> <br>
-                            <label>L10:</label>
-                            <input name = 'lastTen' type = 'text' value = <?php echo $lastTen ?>> <br>
-                            <label>Streak:</label>
-                            <input name = 'streak' type = 'text' value = <?php echo $streak ?>> <br>
+                            <div class = 'formGroup'>
+                                <label>Wins:</label>
+                                <input name = 'wins' type = 'text' class = 'poWins' value = <?php echo $wins ?> autofocus> <br>
+                            </div>
+                            <div class = 'formGroup'>
+                                <label>Losses:</label>
+                                <input name = 'losses' type = 'text' class = 'poLosses' value = <?php echo $losses ?>> <br>
+                            </div>
                             <input name = 'sendUpdate' type = 'hidden' value = "<?php echo $updateTeam ?>">
                             <input name = 'divisionID' type = 'hidden' value = "<?php echo $divisionID ?>">
                             <input type="submit" value = "Update">
@@ -84,14 +80,10 @@
                 $wins = $_GET['wins'];
                 $losses = $_GET['losses'];
                 $winPerc = winPercentage($wins, $losses);
-                $lastTen = $_GET['lastTen'];
-                $streak = $_GET['streak'];
                 $sql = "UPDATE mlbstandings
                         SET wins = '$wins',
                             losses = '$losses',
-                            winPerc = '$winPerc',
-                            lastTen = '$lastTen',
-                            streak = '$streak'
+                            winPerc = '$winPerc'
                         WHERE teamName = '$updateTeam'";
                 mysqli_query($link, $sql) or die('Update error: ' . mysqli_error($link));
 
@@ -115,13 +107,14 @@
         
             //for each division, print out the standings
             for($i = 0; $i < count($divisionName); $i++){
-                $sql = "SELECT divisionName FROM mlbstandings WHERE divisionID = '$divisionName[$i]'";
+                $sql = "SELECT divisionName, divisionID FROM mlbstandings WHERE divisionID = '$divisionName[$i]'";
 
                 $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
 
                 $row = mysqli_fetch_array($result);
     
                 $divName = $row['divisionName'];
+                $divID = $row['divisionID'];
         ?>
                 <div class="ALNL">
                     <?php echo "<h4 class = $divisionName[$i] id = $divisionName[$i]>$divName</h4>" ?>
@@ -132,8 +125,6 @@
                             <th>Losses</th>
                             <th>Win%</th>
                             <th>GB</th>
-                            <th>L10</th>
-                            <th>Streak</th>
                         </tr>
                         <?php
                             //select the data
@@ -152,13 +143,11 @@
                                     $gamesBack = gamesBack($row['teamName'], $row['divisionID']);
                                 }
                                 echo "<tr>
-                                        <td class = 'team'><a class = 'link' href='?updateTeam=$row[teamName]'>$row[teamName]</a></td>
+                                        <td class = 'team'><a class = 'link' href='?updateTeam=$row[teamName]#$divID'>$row[teamName]</a></td>
                                         <td>$row[wins]</td>
                                         <td>$row[losses]</td>
                                         <td>$winPerc</td>
                                         <td>$gamesBack</td>
-                                        <td>$row[lastTen]</td>
-                                        <td>$row[streak]</td>
                                     </tr>";
                             }
                         ?>
