@@ -17,9 +17,11 @@
                 <li class = 'alWest'><a href = '#alwest'>AL West</a></li>
                 <li class = 'alCentral'><a href = '#alcentral'>AL Central</a></li>
                 <li class = 'alEast'><a href = '#aleast'>AL East</a></li>
+                <li class = 'alWild'><a href = '?wildCard=al'>AL WildCard</a></li>
                 <li class = 'nlWest'><a href = '#nlwest'>NL West</a></li>
                 <li class = 'nlCentral'><a href = '#nlcentral'>NL Central</a></li>
                 <li class = 'nlEast'><a href = '#nleast'>NL East</a></li>
+                <li class = 'nlWild'><a href = '?wildCard=nl'>NL WildCard</a></li>
             </ul>
             </div>
         </nav>
@@ -104,7 +106,25 @@
                 header("location: index.php");
 
             }
-        
+
+            //if wildcard link is selected, display ONLY wildcard (al or nl)
+            if(!empty($_GET['wildCard'])){
+                $league = substr($_GET['wildCard'], 0, 2);
+
+                $sql = "SELECT teamName, wins, losses, winPerc, gamesBack FROM mlbstandings WHERE divisionID LIKE '%$league' ";
+
+                $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
+
+                $row = mysqli_fetch_array($result);
+
+                //need all teams in that league (al/nl) - the 3 division leaders, maybe display them above everyone else??
+
+
+            }
+
+            //else, display all 6 divisions like normal
+            else{
+
             //for each division, print out the standings
             for($i = 0; $i < count($divisionName); $i++){
                 $sql = "SELECT divisionName, divisionID FROM mlbstandings WHERE divisionID = '$divisionName[$i]'";
@@ -153,7 +173,10 @@
                         ?>
                     </table>
                 </div>
-        <?php } ?>
+        <?php 
+            } //end of for loop printing division
+            } //end of if else for wildcard link 
+        ?>
     </main>
 </body>
 </html>
