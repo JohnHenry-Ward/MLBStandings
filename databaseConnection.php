@@ -24,7 +24,6 @@ function winPercentage($wins, $losses){
 function divisionLeader($division){
     $link = connectToDatabase();
 
-
     $sql = "SELECT MAX(winPerc) AS leader FROM mlbstandings WHERE divisionID = '$division'";
 
     $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
@@ -36,7 +35,7 @@ function divisionLeader($division){
     return $leadWinPerc;
 }
 
-//returns gamesBack for specific team
+//returns gamesBack for specific team in division
 function gamesBack($teamName, $division){
     $link = connectToDatabase();
 
@@ -65,6 +64,57 @@ function gamesBack($teamName, $division){
 
     $wins = $row['wins'];
     $losses = $row['losses'];
+    $winDiff = $leaderWins - $wins;
+    $loseDiff = $losses - $leaderLosses;
+    $gamesBack = ($winDiff + $loseDiff) / 2;
+
+    return number_format($gamesBack, 1, '.', '');
+}
+
+//returns gamesAhead for the first place team of the wildcard
+function gamesAheadWildCard($sql){
+    $link = connectToDatabase();
+
+    $sql = $sql;
+
+    $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
+
+    $firstTime = true;
+    $secondTime = false;
+    while($row = mysqli_fetch_array($result)){
+        if($firstTime && !$secondTime){
+            $leaderWins = $row['wins'];
+            $leaderLosses = $row['losses'];
+        }
+        elseif($secondTime && !$firstTime){
+            $wins = $row['wins'];
+            $losses = $row['losses'];
+            break;
+        }
+        $firstTime = false;
+        $secondTime = true;
+    }
+
+    $winDiff = $leaderWins - $wins;
+    $loseDiff = $losses - $leaderLosses;
+    $gamesBack = ($winDiff + $loseDiff) / 2;
+
+    return number_format($gamesBack, 1, '.', '');
+}
+
+//returns gamesBack for teams not in the top of the wildcard
+function gamesBackWildCard($wins, $losses, $teamTop){
+    $link = connectToDatabase();
+
+    $sql = "SELECT wins, losses FROM mlbstandings WHERE winPerc = $teamTop";
+
+    $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
+
+    while($row = mysqli_fetch_array($result)){
+        $leaderWins = $row['wins'];
+        $leaderLosses = $row['losses'];
+    }
+
     $winDiff = $leaderWins - $wins;
     $loseDiff = $losses - $leaderLosses;
     $gamesBack = ($winDiff + $loseDiff) / 2;

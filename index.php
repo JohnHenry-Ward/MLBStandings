@@ -11,16 +11,16 @@
 <body>
     <div class="bgImg"></div>
     <header>
-        <h1>MLB Standings</h1>
+        <h1><a href = 'index.php'>MLB Standings</a></h1>
         <nav>
             <ul>
-                <li class = 'alWest'><a href = '#alwest'>AL West</a></li>
-                <li class = 'alCentral'><a href = '#alcentral'>AL Central</a></li>
-                <li class = 'alEast'><a href = '#aleast'>AL East</a></li>
+                <li class = 'alWest'><a href = 'index.php#alwest'>AL West</a></li>
+                <li class = 'alCentral'><a href = 'index.php#alcentral'>AL Central</a></li>
+                <li class = 'alEast'><a href = 'index.php#aleast'>AL East</a></li>
                 <li class = 'alWild'><a href = '?wildCard=al'>AL WildCard</a></li>
-                <li class = 'nlWest'><a href = '#nlwest'>NL West</a></li>
-                <li class = 'nlCentral'><a href = '#nlcentral'>NL Central</a></li>
-                <li class = 'nlEast'><a href = '#nleast'>NL East</a></li>
+                <li class = 'nlWest'><a href = 'index.php#nlwest'>NL West</a></li>
+                <li class = 'nlCentral'><a href = 'index.php#nlcentral'>NL Central</a></li>
+                <li class = 'nlEast'><a href = 'index.php#nleast'>NL East</a></li>
                 <li class = 'nlWild'><a href = '?wildCard=nl'>NL WildCard</a></li>
             </ul>
             </div>
@@ -111,15 +111,57 @@
             if(!empty($_GET['wildCard'])){
                 $league = substr($_GET['wildCard'], 0, 2);
 
-                $sql = "SELECT teamName, wins, losses, winPerc, gamesBack FROM mlbstandings WHERE divisionID LIKE '%$league' ";
+                $sql = "SELECT teamName, wins, losses, winPerc, gamesBack, divisionID FROM mlbstandings WHERE divisionID LIKE '$league%' AND gamesBack != '-' ORDER BY winPerc DESC";
 
                 $result = mysqli_query($link, $sql) or die('SQL syntax error: '.mysqli_error($link));
 
-                $row = mysqli_fetch_array($result);
+                $league = strtoupper($league);
+                ?>
+                <div class="ALNL">
+                    <?php echo "<h4 class = $league >$league WildCard</h4>" ?>
+                    <table class="Division">
+                        <tr>
+                            <th></th> <!--Blank header-->
+                            <th>Wins</th>
+                            <th>Losses</th>
+                            <th>Win%</th>
+                            <th>GB</th>
+                        </tr>
+                        <?php
 
-                //need all teams in that league (al/nl) - the 3 division leaders, maybe display them above everyone else??
+                            $wildCardCount = 0;
 
+                            while($row = mysqli_fetch_array($result)){
+                                if($wildCardCount == 0){
+                                    $gamesBack = '+'.gamesAheadWildCard($sql);
+                                    $wildCardLeader = $row['teamName'];
+                                }
+                                elseif($wildCardCount == 1){
+                                    $gamesBack = '-';
+                                    $secondPlaceWinPerc = $row['winPerc'];
+                                }
+                                elseif($wildCardCount > 1 && $row['winPerc'] == $secondPlaceWinPerc){
+                                    $gamesBack = '-';
+                                }
+                                else{
+                                    $gamesBack = gamesBackWildCard($row['wins'], $row['losses'], $secondPlaceWinPerc);
+                                }
 
+                                $wildCardCount++;
+                                
+                                $divID = $row['divisionID'];
+                                echo "<tr>
+                                        <td class = 'team'>$row[teamName]</td>
+                                        <td>$row[wins]</td>
+                                        <td>$row[losses]</td>
+                                        <td>$row[winPerc]</td>
+                                        <td>$gamesBack</td>
+                                    </tr>";
+                            }
+                        ?>
+                    </table>
+                </div>
+            <?php
             }
 
             //else, display all 6 divisions like normal
